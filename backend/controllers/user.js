@@ -1,11 +1,12 @@
 // Importer bcrypt
 const bcrypt = require('bcrypt');
-
 // Importer JsonWebToken
 const jwt = require('jsonwebtoken')
-
 // Importer le models user
 const User = require('../models/user');
+
+require('dotenv').config();
+const secretKey = process.env.SECRET_KEY;
 
 exports.signup = (req, res, next) => {
     // Récupère le mdp dans l'input et le hash avec bcrypt (éxécute l'algo 10fois)
@@ -52,7 +53,7 @@ exports.login = (req, res, next) => {
                             // que seul le ou les serveurs ayant accès a cette 
                             // clé peut créer des tokens et vérifier leur 
                             // intégrité
-                            'RANDOM_TOKEN_SECRET', // (Utiliser un clé secrète beaucoup plus longue et random en prod !!!)
+                            secretKey, // (Utiliser un clé secrète beaucoup plus longue et random en prod !!!)
                             // Délais d'expiration du token
                             { expiresIn: '24h' }
                         )
