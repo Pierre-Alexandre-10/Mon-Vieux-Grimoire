@@ -3,6 +3,7 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
+sharp.cache(false);
 
 // Gérer l'extension du fichier
 const MIME_TYPES = {
@@ -36,20 +37,22 @@ module.exports.resizeImage = (req, res, next) => {
         return next();
     }
      // Récupération du chemin du fichier téléchargé et du nom de fichier
-    // Chemin vers le fichier sur le disque
+    //  stocke le chemin complet du fichier original téléchargé
     const filePath = req.file.path;
-    // Nom original du fichier
+    // Récupère le nom du fichier
     const fileName = req.file.filename;
     // Chemin pour enregistrer l'image redimensionnée
     const outputFilePath = path.join('images', `resized_${fileName}`);
-    console.log(`Redimensionnement de l'image: ${filePath} vers ${outputFilePath}`);
     // Utilisation de sharp pour redimensionner l'image
     sharp(filePath)
         .resize({ width: 400, height: 600 })
         // Enregistre l'image redimensionnée à l'emplacement spécifié
         .toFile(outputFilePath)
         .then(() => {
+
             // Après un redimensionnement réussi, supprime le fichier original
+            // setImmediate(() => {
+
             fs.unlink(filePath, (error) => {
                 if (error) {
                     console.error('Erreur lors de la suppression du fichier original:', error);
@@ -58,7 +61,8 @@ module.exports.resizeImage = (req, res, next) => {
                 req.file.path = outputFilePath; 
                 // Passe au middleware suivant
                 next();
-            });
+            // });
+        });
         })
         .catch((error) => {
             // Gestion des erreurs lors de la recherche dans la base de données
@@ -66,6 +70,7 @@ module.exports.resizeImage = (req, res, next) => {
             res.status(500).json({ error: "Erreur interne du serveur." });
             return next();
         });
+            
 };
 
 

@@ -78,6 +78,13 @@
     margin-inline: 20px;
 }
 
+header {
+    display: none;
+}
+footer {
+    display: none;
+}
+
 @media all and (max-width: 1300px) {
     .Form {
         width: 70%;

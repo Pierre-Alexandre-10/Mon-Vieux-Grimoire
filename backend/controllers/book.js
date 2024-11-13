@@ -83,7 +83,7 @@ exports.deleteBook = (req, res, next) => {
         .then(book => {
             // Seul le créateur de la fiche du livre peux la supprimer
             if (book.userId !== req.auth.userId) {
-                res.status(401).json({ message : 'Not authorized' });
+                res.status(403).json({ message : " 403: unauthorized request" });
             } else {
                 // Séparation du fichier  image
                 const filename = book.imageUrl.split('/images/')[1];
@@ -109,7 +109,7 @@ exports.ratingBook = (req, res, next) => {
             // Cherche si l'utilisateur n'a pas déjà noté le livre
             const foundRating = book.ratings.find(rating => rating.userId === req.body.userId)
             if (foundRating) {
-                res.status(400).json({ message: "Livre déjà noté" })
+                res.status(403).json({ message: "403: unauthorized request" })
             } else {
                 // Ajoute l'objet (user id et note) au tableau ratings du livre trouvé
                 book.ratings.push({userId: req.auth.userId, grade: req.body.rating})
@@ -131,7 +131,7 @@ exports.ratingBook = (req, res, next) => {
         })
         .catch(error => res.status(400).json({ error }));
     } else {
-        res.status(403).json({ message: "modification non autorisé"})
+        res.status(403).json({ message: "Modification non autorisé"})
     }
 };
 
